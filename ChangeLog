@@ -1,0 +1,6 @@
+2004-01-20  Keith Packard  <keithp@keithp.com>
+
+	* transSet.c: (main):
+	Change property name to _NET_WM_WINDOW_OPACITY
+	Report values as doubles.
+	Delete property when opaque.
