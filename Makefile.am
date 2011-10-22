@@ -2,7 +2,7 @@ bin_PROGRAMS = transset
 man_MANS = transset.1
 
 AM_CFLAGS = $(CWARNFLAGS) $(TRANSSET_CFLAGS)
-transset_LDADD = $(TRANSSET_LIBS) -lm
+transset_LDADD = $(TRANSSET_LIBS)
 
 transset_SOURCES = transSet.c dsimple.c dsimple.h
 

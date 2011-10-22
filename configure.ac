@@ -28,7 +28,7 @@ AC_STRUCT_TM
 
 # Checks for library functions.
 
-PKG_CHECK_MODULES(TRANSSET, xcomposite xfixes xdamage xrender)
+PKG_CHECK_MODULES(TRANSSET, x11)
 AC_SUBST(TRANSSET_CFLAGS)
 AC_SUBST(TRANSSET_LIBS)
 
