@@ -4,12 +4,15 @@
    The purpos is to bind it from your wm to a key or mouse-button
 
    License: Use however you want.
-   Written by: Daniel Forchheimer (upiom)
-   
+   Authors: 
+	Matthew Hawn
+	Daniel Forchheimer
+	Andreas Kohn
+	Roman Divacky
 */
 
-#define VERSIONSTR "5"
-#define RELEASEDATESTR "2006-01-10"
+#define VERSIONSTR "6"
+#define RELEASEDATESTR "2007-09-21"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -38,6 +41,8 @@ void usage()
 	  "    -c, --click          select by clicking on window (default)\n");
   fprintf(stderr,
 	  "    -p, --point          select the window currently under the cursor\n");
+  fprintf(stderr,
+	  "    -a, --actual         select the actual window\n");
   fprintf(stderr,
 	  "    -n, --name NAME      select by name, NAME is matched as regular expression\n");
   fprintf(stderr,
@@ -85,6 +90,15 @@ Window get_top_window(Display *dpy,Window child) {
 		return child;
 }
 
+/* returns the actual window */
+Window get_actual_window(Display *dpy)
+{
+    int i;
+    Window w;
+
+    XGetInputFocus(dpy, &w, &i);
+    return get_top_window(dpy, w);
+}
 
 /* nothing fancy */
 int main(int argc, char **argv)
@@ -109,6 +123,7 @@ int main(int argc, char **argv)
     {"toggle",0,NULL,'t'},
     {"help",0,NULL,'h'},
     {"point",0,NULL,'p'},
+    {"actual",0,NULL,'a'},
     {"click",0,NULL,'c'},
     {"id",1,NULL,'i'},
     {"name",1,NULL,'n'},
@@ -131,7 +146,7 @@ int main(int argc, char **argv)
   Setup_Display_And_Screen(&argc, argv);
 
 	/* parse arguments */
-  while ((o = getopt_long(argc, argv, "thpci:n:vVm:x:123",long_options,&options_index)) != -1)
+  while ((o = getopt_long(argc, argv, "thapci:n:vVm:x:123",long_options,&options_index)) != -1)
     {
       switch (o) {
       case 't':
@@ -155,6 +170,9 @@ int main(int argc, char **argv)
 				namestr = malloc(strlen(optarg)+1);
 				namestr = optarg;
 				select_method=3;
+			break;
+      case 'a':
+				select_method=4;
 			break;
       case '1':
 				flag_increase=1;
@@ -228,6 +246,8 @@ int main(int argc, char **argv)
 		target_win = get_top_window(dpy,target_win);
 		if(flag_verbose) printf("found 0x%x\n",(unsigned int)target_win);
 		
+  } else if(select_method==4) {
+     target_win = get_actual_window(dpy);
   } else {
     /* grab mouse and return window that is next clicked */
     target_win = Select_Window(dpy);

@@ -16,6 +16,7 @@ changing any wm-code. And it's a very "unix way" of doing things too :)
 
 Features
 	*select window by clicking (as transset)
+	*select actual focused X11 window
 	*select window by pointing
 	*select by window name or id
 	*force toggle
@@ -33,4 +34,4 @@ me a email
 
 Cheers
 Daniel Forchheimer (upiom)
-n04df@efd.lth.se
+n04df@student.lth.se
