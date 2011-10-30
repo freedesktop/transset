@@ -48,8 +48,6 @@ extern int screen;                           /* The current screen */
 #define INIT_NAME program_name=argv[0]        /* use this in main to setup
                                                  program_name */
 
-char *Get_Display_Name(int *, char **);
-Display *Open_Display(char *);
 void Setup_Display_And_Screen(int *, char **);
 void usage(void);
 
@@ -68,7 +66,6 @@ Window Select_Window(Display *);
 Window Get_Window_Under_Cursor(Display *); /*added by Daniel Forchheimer for transset-df*/
 Window Window_With_Name(Display *, Window, char *);
 Window Window_With_Name_Regex(Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
-Window Window_With_Name_Regex_Recurse(Display *, Window, regex_t *); /*added by Daniel Forchheimer for transset-df*/
 #ifdef __GNUC__
 void Fatal_Error(char *, ...) __attribute__((__noreturn__));
 #else

@@ -69,7 +69,7 @@ void usage(void)
 #define OPACITY	"_NET_WM_WINDOW_OPACITY"
 
 /* returns the highest parent of child that is not the root-window */
-Window get_top_window(Display *dpy,Window child) {
+static Window get_top_window(Display *dpy,Window child) {
 		Window parent;
 		Window root;
 		Window *child_list;
@@ -91,7 +91,7 @@ Window get_top_window(Display *dpy,Window child) {
 }
 
 /* returns the actual window */
-Window get_actual_window(Display *dpy)
+static Window get_actual_window(Display *dpy)
 {
     int i;
     Window w;

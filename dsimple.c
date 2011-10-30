@@ -64,7 +64,7 @@ int screen;
  * Get_Display_Name (argc, argv) Look for -display, -d, or host:dpy (obselete)
  * If found, remove it from command line.  Don't go past a lone -.
  */
-char *Get_Display_Name(int *pargc, char **argv)
+static char *Get_Display_Name(int *pargc, char **argv)
 {
     int argc = *pargc;
     char **pargv = argv+1;
@@ -98,7 +98,7 @@ char *Get_Display_Name(int *pargc, char **argv)
  * Open_Display: Routine to open a display with correct error handling.
  *               Does not require dpy or screen defined on entry.
  */
-Display *Open_Display(char *display_name)
+static Display *Open_Display(char *display_name)
 {
 	Display *d;
 
@@ -269,7 +269,7 @@ Window Window_With_Name(Display *dpy, Window top, char *name)
  * 																	instead of char*
  * Written by Daniel Forchheimer 2005
  * */
-Window Window_With_Name_Regex_Recurse(Display *dpy, Window top,
+static Window Window_With_Name_Regex_Recurse(Display *dpy, Window top,
                                       regex_t *reg_name)
 {
 	Window *children, dummy;
