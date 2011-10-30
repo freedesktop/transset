@@ -1,0 +1,26 @@
+This is a patched version of xorg's transset
+I wanted to integrate transset into my windowmanager and to
+be able to set and unset transparency by just pressing a key.
+To make that possible I didn't want transset to wait for me to
+click on a window but instead setting transparency immidietly on
+the window under the cursor.
+
+In the future I guess it's ment for the windowmanagers to handle
+transparency. Then we will hopefully see this function and many other
+now imposible functions (like opacity following the mousepointer).
+But this will require you to wait untill this is implementet in
+your favorite wm. This patch is my way of "scratching where it itches",
+with only minor changes transset can now be used with any windowmanager
+to make it do somethink actually usefull.
+
+Features
+	-select window by clicking (as transset)
+	-select window by pointing
+	-force toggle
+
+
+Any questions/sugestions just send me a email
+
+Cheers
+Daniel Forchheimer (upiom)
+n04df@efd.lth.se

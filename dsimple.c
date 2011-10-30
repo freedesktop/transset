@@ -450,6 +450,41 @@ Window Select_Window(dpy)
   return(target_win);
 }
 
+/*
+ * Routine that returns the window currently under the cursor
+ * Added by Daniel Forchheimer.   Last updated 19/12/04
+ */
+
+Window Get_Window_Under_Cursor(dpy)
+     Display *dpy;
+{
+  int status;
+  Cursor cursor;
+  XEvent event;
+  Window target_win = None, root = RootWindow(dpy,screen);
+  int buttons = 0;
+  Window tmp;
+  int rx,ry,cx,cy;
+  unsigned int mask;
+  
+  /* Make the target cursor */
+  cursor = XCreateFontCursor(dpy, XC_crosshair);
+
+  /* Grab the pointer using target cursor, letting it room all over */
+  status = XGrabPointer(dpy, root, False,
+			ButtonPressMask|ButtonReleaseMask, GrabModeSync,
+			GrabModeAsync, root, cursor, CurrentTime);
+  if (status != GrabSuccess) Fatal_Error("Can't grab the mouse.");
+
+  /* get the window under the cursor */
+  XQueryPointer(dpy, root, &tmp, &target_win, &rx, &ry, 
+		&cx, &cy, &mask);
+
+  XUngrabPointer(dpy, CurrentTime);      /* Done with pointer */
+
+  return(target_win);
+}
+
 
 /*
  * Window_With_Name: routine to locate a window with a given name on a display.
