@@ -3,13 +3,13 @@
    With some additional features to make it more automatic and integrated
    The purpos is to bind it from your wm to a key or mouse-button
 
-   Use however you want.
+   License: Use however you want.
    Written by: Daniel Forchheimer (upiom)
    
 */
 
-#define VERSIONSTR "4"
-#define RELEASEDATESTR "2005-03-13"
+#define VERSIONSTR "5"
+#define RELEASEDATESTR "2006-01-10"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -121,6 +121,11 @@ int main(int argc, char **argv)
     {"verbose",0,NULL,'v'},
     {0,0,0,0}
   };
+  unsigned char *data;
+
+  Atom actual;
+  int format;
+  unsigned long n, left;
 
   /* wonderful utility */
   Setup_Display_And_Screen(&argc, argv);
@@ -228,12 +233,6 @@ int main(int argc, char **argv)
     target_win = Select_Window(dpy);
   }
   
-  unsigned char *data;
-
-  Atom actual;
-  int format;
-  unsigned long n, left;
-
   if (!gotd) d=0.75;
 
   /* get property */
