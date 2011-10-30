@@ -2,21 +2,18 @@ bin_PROGRAMS = transset
 man_MANS = transset.1
 
 AM_CFLAGS = $(CWARNFLAGS) $(TRANSSET_CFLAGS)
-transset_LDADD = $(TRANSSET_LIBS)
+transset_LDADD = $(TRANSSET_LIBS) $(LIBOBJS)
 
 transset_SOURCES = transSet.c dsimple.c dsimple.h
 
-EXTRA_DIST = \
-	autogen.sh \
-	ChangeLog \
-	${man_MANS}
+MAINTAINERCLEANFILES = ChangeLog INSTALL
 
-MAINTAINERCLEANFILES=ChangeLog
+.PHONY: ChangeLog INSTALL
 
-.PHONY: ChangeLog
+INSTALL:
+	$(INSTALL_CMD)
 
 ChangeLog:
 	$(CHANGELOG_CMD)
 
-dist-hook: ChangeLog
-
+dist-hook: ChangeLog INSTALL
