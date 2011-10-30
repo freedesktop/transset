@@ -48,8 +48,8 @@ extern int screen;                           /* The current screen */
 #define INIT_NAME program_name=argv[0]        /* use this in main to setup
                                                  program_name */
 
-void Setup_Display_And_Screen(int *, char **);
-void usage(void);
+void Setup_Display_And_Screen (int *, char **);
+void Usage (void);
 
 #define X_USAGE "[host:display]"              /* X arguments handled by
 						 Get_Display_Name */
@@ -62,12 +62,12 @@ void usage(void);
  * Send bugs, etc. to chariot@athena.mit.edu.
  */
 
-Window Select_Window(Display *);
-Window Get_Window_Under_Cursor(Display *); /*added by Daniel Forchheimer for transset-df*/
-Window Window_With_Name(Display *, Window, char *);
-Window Window_With_Name_Regex(Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
+Window Select_Window (Display *);
+Window Get_Window_Under_Cursor (Display *); /*added by Daniel Forchheimer for transset-df*/
+Window Window_With_Name (Display *, Window, char *);
+Window Window_With_Name_Regex (Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
 #ifdef __GNUC__
-void Fatal_Error(char *, ...) __attribute__((__noreturn__));
+void Fatal_Error (char *, ...) __attribute__((__noreturn__));
 #else
-void Fatal_Error(char *, ...);
+void Fatal_Error (char *, ...);
 #endif
