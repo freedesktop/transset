@@ -28,7 +28,7 @@ Window target_win;
 
 /* needed by dsimple.c */
 
-void usage()
+void usage(void)
 {
   fprintf(stderr,"usage: transset-df [-options ...] [opacity]\n");
   fprintf(stderr,"options:\n");

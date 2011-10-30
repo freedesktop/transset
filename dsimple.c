@@ -64,9 +64,7 @@ int screen;
  * Get_Display_Name (argc, argv) Look for -display, -d, or host:dpy (obselete)
  * If found, remove it from command line.  Don't go past a lone -.
  */
-char *Get_Display_Name(pargc, argv)
-    int *pargc;  /* MODIFIED */
-    char **argv; /* MODIFIED */
+char *Get_Display_Name(int *pargc, char **argv)
 {
     int argc = *pargc;
     char **pargv = argv+1;
@@ -100,8 +98,7 @@ char *Get_Display_Name(pargc, argv)
  * Open_Display: Routine to open a display with correct error handling.
  *               Does not require dpy or screen defined on entry.
  */
-Display *Open_Display(display_name)
-char *display_name;
+Display *Open_Display(char *display_name)
 {
 	Display *d;
 
@@ -124,9 +121,7 @@ char *display_name;
  *                           for this display is then stored in screen.
  *                           Does not require dpy or screen defined.
  */
-void Setup_Display_And_Screen(argc, argv)
-int *argc;      /* MODIFIED */
-char **argv;    /* MODIFIED */
+void Setup_Display_And_Screen(int *argc, char **argv)
 {
 	dpy = Open_Display (Get_Display_Name(argc, argv));
 	screen = DefaultScreen(dpy);
@@ -159,8 +154,7 @@ void Fatal_Error(char *msg, ...)
  * Routine to let user select a window using the mouse
  */
 
-Window Select_Window(dpy)
-     Display *dpy;
+Window Select_Window(Display *dpy)
 {
   int status;
   Cursor cursor;
@@ -207,8 +201,7 @@ Window Select_Window(dpy)
  * Added by Daniel Forchheimer.   Last updated 19/12/04
  */
 
-Window Get_Window_Under_Cursor(dpy)
-     Display *dpy;
+Window Get_Window_Under_Cursor(Display *dpy)
 {
   int status;
   Cursor cursor;
@@ -245,10 +238,7 @@ Window Get_Window_Under_Cursor(dpy)
  *                   one found will be returned.  Only top and its subwindows
  *                   are looked at.  Normally, top should be the RootWindow.
  */
-Window Window_With_Name(dpy, top, name)
-     Display *dpy;
-     Window top;
-     char *name;
+Window Window_With_Name(Display *dpy, Window top, char *name)
 {
 	Window *children, dummy;
 	unsigned int nchildren;
@@ -279,10 +269,8 @@ Window Window_With_Name(dpy, top, name)
  * 																	instead of char*
  * Written by Daniel Forchheimer 2005
  * */
-Window Window_With_Name_Regex_Recurse(dpy, top, reg_name)
-     Display *dpy;
-     Window top;
-		 regex_t *reg_name;
+Window Window_With_Name_Regex_Recurse(Display *dpy, Window top,
+                                      regex_t *reg_name)
 {
 	Window *children, dummy;
 	unsigned int nchildren;
@@ -305,10 +293,7 @@ Window Window_With_Name_Regex_Recurse(dpy, top, reg_name)
 	return(w);
 }
 /* prepare the reg-exp for use with above function */
-Window Window_With_Name_Regex(dpy,top,name) 
-	Display *dpy;
-	Window top;
-	char *name;
+Window Window_With_Name_Regex(Display *dpy, Window top, char *name) 
 {
 		int err_no=0;
 		regex_t *regexp_name;
