@@ -39,6 +39,7 @@ from The Open Group.
  * Send bugs, etc. to chariot@athena.mit.edu.
  */
 
+#include <regex.h>
     /* Global variables used by routines in just_display.c */
 
 extern char *program_name;                   /* Name of this program */
@@ -91,14 +92,20 @@ void usage();
 unsigned long Resolve_Color(Window, char *);
 Pixmap Bitmap_To_Pixmap(Display *, Drawable, GC, Pixmap, int, int);
 Window Select_Window(Display *);
+Window Get_Window_Under_Cursor(Display *); /*added by Daniel Forchheimer for transset-df*/
 void blip(void);
 Window Window_With_Name(Display *, Window, char *);
+Window Window_With_Name_Regex(Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
+Window Window_With_Name_Regex_Recurse(Display *, Window, regex_t *); /*added by Daniel Forchheimer for transset-df*/
 #else
 unsigned long Resolve_Color();
 Pixmap Bitmap_To_Pixmap();
 Window Select_Window();
+Window Get_Window_Under_Cursor(); /*added by Daniel Forchheimer for transset-df*/
 void blip();
 Window Window_With_Name();
+Window Window_With_Name_Regex(); /*added by Daniel Forchheimer for transset-df*/
+Window Window_With_Name_Regex_Recurse(); /*added by Daniel Forchheimer for transset-df*/
 #endif
 #ifdef __GNUC__
 void Fatal_Error(char *, ...) __attribute__((__noreturn__));
