@@ -40,7 +40,6 @@ from The Open Group.
  */
 
 #include <regex.h>
-    /* Global variables used by routines in just_display.c */
 
 extern char *program_name;                   /* Name of this program */
 extern Display *dpy;                         /* The current display */
@@ -49,33 +48,10 @@ extern int screen;                           /* The current screen */
 #define INIT_NAME program_name=argv[0]        /* use this in main to setup
                                                  program_name */
 
-    /* Declaritions for functions in just_display.c */
-
-#if NeedFunctionPrototypes
-char *Malloc(unsigned);
-char *Realloc(char *, int);
 char *Get_Display_Name(int *, char **);
 Display *Open_Display(char *);
 void Setup_Display_And_Screen(int *, char **);
-XFontStruct *Open_Font(char *);
-void Beep(void);
-Pixmap ReadBitmapFile(Drawable, char *, int *, int *, int *, int *);
-void WriteBitmapFile(char *, Pixmap, int, int, int, int);
-Window Select_Window_Args(int *, char **);
 void usage(void);
-#else
-char *Malloc();
-char *Realloc();
-char *Get_Display_Name();
-Display *Open_Display();
-void Setup_Display_And_Screen();
-XFontStruct *Open_Font();
-void Beep();
-Pixmap ReadBitmapFile();
-void WriteBitmapFile();
-Window Select_Window_Args();
-void usage();
-#endif
 
 #define X_USAGE "[host:display]"              /* X arguments handled by
 						 Get_Display_Name */
@@ -88,28 +64,13 @@ void usage();
  * Send bugs, etc. to chariot@athena.mit.edu.
  */
 
-#if NeedFunctionPrototypes
-unsigned long Resolve_Color(Window, char *);
-Pixmap Bitmap_To_Pixmap(Display *, Drawable, GC, Pixmap, int, int);
 Window Select_Window(Display *);
 Window Get_Window_Under_Cursor(Display *); /*added by Daniel Forchheimer for transset-df*/
-void blip(void);
 Window Window_With_Name(Display *, Window, char *);
 Window Window_With_Name_Regex(Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
 Window Window_With_Name_Regex_Recurse(Display *, Window, regex_t *); /*added by Daniel Forchheimer for transset-df*/
-#else
-unsigned long Resolve_Color();
-Pixmap Bitmap_To_Pixmap();
-Window Select_Window();
-Window Get_Window_Under_Cursor(); /*added by Daniel Forchheimer for transset-df*/
-void blip();
-Window Window_With_Name();
-Window Window_With_Name_Regex(); /*added by Daniel Forchheimer for transset-df*/
-Window Window_With_Name_Regex_Recurse(); /*added by Daniel Forchheimer for transset-df*/
-#endif
 #ifdef __GNUC__
 void Fatal_Error(char *, ...) __attribute__((__noreturn__));
 #else
 void Fatal_Error(char *, ...);
 #endif
-void outl(char *, ...);
