@@ -8,7 +8,7 @@
    
 */
 
-#define VERSIONSTR "1"
+#define VERSIONSTR "2"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -36,6 +36,14 @@ void usage()
   fprintf(stderr,
 	  "    -p, --point          select the window currently under the cursor\n");
   fprintf(stderr,
+	  "        --inc            increase by the given opacity\n");
+  fprintf(stderr,
+	  "        --dec            decrease by given opacity\n");
+  fprintf(stderr,
+	  "    -m, --min=OPACITY    minimum possible opacity (default = 0)\n");
+  fprintf(stderr,
+	  "    -x, --max=OPACITY    maximum possible opacity (default = 1)\n");
+  fprintf(stderr,
 	  "    -v, --version        print version number\n");
 
   exit(1);
@@ -53,7 +61,10 @@ int main(int argc, char **argv)
   unsigned int current_opacity;
   int select_method = 0; // 0 = click, 1 = point
   int flag_toggle=0;
+  int flag_increase=0;
+  int flag_decrease=0;
   int o;
+  float min=0,max=1;
 
   int options_index=0;
   static struct option long_options[] = {
@@ -61,6 +72,10 @@ int main(int argc, char **argv)
     {"help",0,NULL,'h'},
     {"point",0,NULL,'p'},
     {"click",0,NULL,'c'},
+    {"inc",0,NULL,'1'},
+    {"dec",0,NULL,'2'},
+    {"min",1,NULL,'m'},
+    {"max",1,NULL,'x'},
     {"version",0,NULL,'v'},
     {0,0,0,0}
   };
@@ -68,7 +83,7 @@ int main(int argc, char **argv)
   /* wonderful utility */
   Setup_Display_And_Screen(&argc, argv);
 
-  while ((o = getopt_long(argc, argv, "thpcv",long_options,&options_index)) != -1)
+  while ((o = getopt_long(argc, argv, "thpcvm:x:12",long_options,&options_index)) != -1)
     {
       switch (o) {
       case 't':
@@ -82,6 +97,18 @@ int main(int argc, char **argv)
 	break;
       case 'p':
 	select_method=1;
+	break;
+      case '1':
+	flag_increase=1;
+	break;
+      case '2':
+	flag_decrease=1;
+	break;
+      case 'm':
+	min = atof(optarg);
+	break;
+      case 'x':
+	max = atof(optarg);
 	break;
       case 'v':
 	fprintf(stderr,"version: %s\n",VERSIONSTR);
@@ -97,6 +124,7 @@ int main(int argc, char **argv)
     d = atof (argv[optind]);
     gotd = 1;
   }
+
   
   if(select_method==1) {
     /* don't wait for click */
@@ -112,11 +140,7 @@ int main(int argc, char **argv)
   int format;
   unsigned long n, left;
 
-
-  if (gotd)
-    opacity = (unsigned int) (d * OPAQUE);
-  else 
-    opacity = 0xc0000000;
+  if (!gotd) d=0.75;
 
   /* get property */
   XGetWindowProperty(dpy, target_win, XInternAtom(dpy, OPACITY, False), 
@@ -131,6 +155,18 @@ int main(int argc, char **argv)
     }
   else
     current_opacity = OPAQUE;
+  
+  if(flag_increase) {
+    d = (double)current_opacity/OPAQUE + d; 
+  } else if(flag_decrease) {
+    d = (double)current_opacity/OPAQUE - d;
+  }
+ printf("%f\n",d);
+  /* check min and max */
+  if(d<min) d=min;
+  if(d>max) d=max;
+
+  opacity = (unsigned int) (d * OPAQUE);
 
   /* for user-compability with transset */
   if(!gotd) flag_toggle=1;
