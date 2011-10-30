@@ -8,7 +8,7 @@
    
 */
 
-#define VERSIONSTR "2"
+#define VERSIONSTR "3"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -36,13 +36,17 @@ void usage()
   fprintf(stderr,
 	  "    -p, --point          select the window currently under the cursor\n");
   fprintf(stderr,
+	  "    -n, --name NAME      select by name\n");
+  fprintf(stderr,
+	  "    -i, --id             select by window id\n");
+  fprintf(stderr,
 	  "        --inc            increase by the given opacity\n");
   fprintf(stderr,
 	  "        --dec            decrease by given opacity\n");
   fprintf(stderr,
-	  "    -m, --min=OPACITY    minimum possible opacity (default = 0)\n");
+	  "    -m, --min OPACITY    minimum possible opacity (default = 0)\n");
   fprintf(stderr,
-	  "    -x, --max=OPACITY    maximum possible opacity (default = 1)\n");
+	  "    -x, --max OPACITY    maximum possible opacity (default = 1)\n");
   fprintf(stderr,
 	  "    -v, --version        print version number\n");
 
@@ -65,6 +69,11 @@ int main(int argc, char **argv)
   int flag_decrease=0;
   int o;
   float min=0,max=1;
+	char *idstr,*namestr;
+
+	Window root_win;
+	Window *child_list;
+	unsigned int num_children;
 
   int options_index=0;
   static struct option long_options[] = {
@@ -72,6 +81,8 @@ int main(int argc, char **argv)
     {"help",0,NULL,'h'},
     {"point",0,NULL,'p'},
     {"click",0,NULL,'c'},
+    {"id",1,NULL,'i'},
+    {"name",1,NULL,'n'},
     {"inc",0,NULL,'1'},
     {"dec",0,NULL,'2'},
     {"min",1,NULL,'m'},
@@ -83,7 +94,7 @@ int main(int argc, char **argv)
   /* wonderful utility */
   Setup_Display_And_Screen(&argc, argv);
 
-  while ((o = getopt_long(argc, argv, "thpcvm:x:12",long_options,&options_index)) != -1)
+  while ((o = getopt_long(argc, argv, "thpci:n:vm:x:12",long_options,&options_index)) != -1)
     {
       switch (o) {
       case 't':
@@ -97,6 +108,16 @@ int main(int argc, char **argv)
 	break;
       case 'p':
 	select_method=1;
+	break;
+      case 'i':
+	idstr = malloc(strlen(optarg)+1);
+	idstr = optarg;
+	select_method=2;
+	break;
+      case 'n':
+	namestr = malloc(strlen(optarg)+1);
+	namestr = optarg;
+	select_method=3;
 	break;
       case '1':
 	flag_increase=1;
@@ -129,6 +150,40 @@ int main(int argc, char **argv)
   if(select_method==1) {
     /* don't wait for click */
     target_win = Get_Window_Under_Cursor(dpy);
+	} else if(select_method==2) {
+    /* select by id, pretty much stripped from dsimple.c */
+		sscanf(idstr, "0x%lx", &target_win);
+		if (!target_win)
+		  sscanf(idstr, "%ld", &target_win);
+		if (!target_win) {
+		  fprintf(stderr,"Invalid window id format: %s.\n", idstr);
+			exit(0);
+		}
+		/* apparently we want the grandparent of this window, otherwise
+		 * deleting the property won't work, cudos to another transset patch
+		 * for leading me in this direction */
+	  if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
+			  &num_children))
+  	  Fatal_Error("Can't query window tree.");
+  	if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
+			  &num_children))
+  	  Fatal_Error("Can't query window tree.");
+		
+	} else if(select_method==3) {
+    /* select by name, pretty much stripped from dsimple.c */
+		target_win = Window_With_Name(dpy, RootWindow(dpy, screen),namestr);
+		if (!target_win) {
+			  fprintf(stderr,"No window with name %s exists!\n",namestr);
+				exit(0);
+		}
+		/* get grandparent */
+		if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
+			  &num_children))
+  	  Fatal_Error("Can't query window tree.");
+  	if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
+			  &num_children))
+  	  Fatal_Error("Can't query window tree.");
+		
   } else {
     /* grab mouse and return window that is next clicked */
     target_win = Select_Window(dpy);
@@ -161,7 +216,7 @@ int main(int argc, char **argv)
   } else if(flag_decrease) {
     d = (double)current_opacity/OPAQUE - d;
   }
- printf("%f\n",d);
+ //printf("%f\n",d);
   /* check min and max */
   if(d<min) d=min;
   if(d>max) d=max;
@@ -178,9 +233,9 @@ int main(int argc, char **argv)
 
   //  printf ("opacity 0x%x\n", opacity);
   if (opacity == OPAQUE)
-    XDeleteProperty (dpy, target_win, XInternAtom(dpy, OPACITY, False));
+  	XDeleteProperty (dpy, target_win, XInternAtom(dpy, OPACITY, False));
   /* set it */
-  else
+	else
     XChangeProperty(dpy, target_win, XInternAtom(dpy, OPACITY, False), 
 		    XA_CARDINAL, 32, PropModeReplace, 
 		    (unsigned char *) &opacity, 1L);
