@@ -8,7 +8,8 @@
    
 */
 
-#define VERSIONSTR "3"
+#define VERSIONSTR "4"
+#define RELEASEDATESTR "2005-03-13"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -16,7 +17,9 @@
 #include "dsimple.h"
 #include <stdlib.h>
 #include <getopt.h>
-
+#include <string.h>
+#include <sys/types.h>
+#include <regex.h>
 
 Window target_win;
 
@@ -36,7 +39,9 @@ void usage()
   fprintf(stderr,
 	  "    -p, --point          select the window currently under the cursor\n");
   fprintf(stderr,
-	  "    -n, --name NAME      select by name\n");
+	  "    -n, --name NAME      select by name, NAME is matched as regular expression\n");
+  fprintf(stderr,
+	  "    --no-regex           don't use regular expression for matching name\n");
   fprintf(stderr,
 	  "    -i, --id             select by window id\n");
   fprintf(stderr,
@@ -48,13 +53,38 @@ void usage()
   fprintf(stderr,
 	  "    -x, --max OPACITY    maximum possible opacity (default = 1)\n");
   fprintf(stderr,
-	  "    -v, --version        print version number\n");
+	  "    -v, --verbose        print some debug info\n");
+  fprintf(stderr,
+	  "    -V, --version        print version number\n");
 
   exit(1);
 }
 
 #define OPAQUE	0xffffffff
 #define OPACITY	"_NET_WM_WINDOW_OPACITY"
+
+/* returns the highest parent of child that is not the root-window */
+Window get_top_window(Display *dpy,Window child) {
+		Window parent;
+		Window root;
+		Window *child_list;
+		unsigned int num_children;
+		
+	 	if (!XQueryTree(dpy, child, &root, &parent, &child_list,
+				  &num_children))
+  	  Fatal_Error("Can't query window tree.");
+		if(parent==root) return child;
+		
+		while(parent!=root) {
+			child = parent;
+	 		if (!XQueryTree(dpy, child, &root, &parent, &child_list,
+				  &num_children))
+			Fatal_Error("Can't query window tree.");
+
+		}
+		return child;
+}
+
 
 /* nothing fancy */
 int main(int argc, char **argv)
@@ -63,18 +93,17 @@ int main(int argc, char **argv)
   double d;
   unsigned int opacity;
   unsigned int current_opacity;
-  int select_method = 0; // 0 = click, 1 = point
+  int select_method = 0; // 0 = click, 1 = point, 2 = id, 3 = name
   int flag_toggle=0;
   int flag_increase=0;
   int flag_decrease=0;
+	int flag_verbose=0;
+	int flag_no_regex=0;
   int o;
   float min=0,max=1;
 	char *idstr,*namestr;
-
-	Window root_win;
-	Window *child_list;
-	unsigned int num_children;
-
+	char *windowname=NULL;
+	
   int options_index=0;
   static struct option long_options[] = {
     {"toggle",0,NULL,'t'},
@@ -87,56 +116,65 @@ int main(int argc, char **argv)
     {"dec",0,NULL,'2'},
     {"min",1,NULL,'m'},
     {"max",1,NULL,'x'},
-    {"version",0,NULL,'v'},
+    {"no-regex",0,NULL,'4'},
+    {"version",0,NULL,'V'},
+    {"verbose",0,NULL,'v'},
     {0,0,0,0}
   };
 
   /* wonderful utility */
   Setup_Display_And_Screen(&argc, argv);
 
-  while ((o = getopt_long(argc, argv, "thpci:n:vm:x:12",long_options,&options_index)) != -1)
+	/* parse arguments */
+  while ((o = getopt_long(argc, argv, "thpci:n:vVm:x:123",long_options,&options_index)) != -1)
     {
       switch (o) {
       case 't':
-	flag_toggle=1;
-	break;
+				flag_toggle=1;
+			break;
       case 'h':
-	usage();
-	break;
+				usage();
+			break;
       case 'c':
-	select_method=0;
-	break;
+				select_method=0;
+			break;
       case 'p':
-	select_method=1;
-	break;
+				select_method=1;
+			break;
       case 'i':
-	idstr = malloc(strlen(optarg)+1);
-	idstr = optarg;
-	select_method=2;
-	break;
+				idstr = malloc(strlen(optarg)+1);
+				idstr = optarg;
+				select_method=2;
+			break;
       case 'n':
-	namestr = malloc(strlen(optarg)+1);
-	namestr = optarg;
-	select_method=3;
-	break;
+				namestr = malloc(strlen(optarg)+1);
+				namestr = optarg;
+				select_method=3;
+			break;
       case '1':
-	flag_increase=1;
-	break;
+				flag_increase=1;
+			break;
       case '2':
-	flag_decrease=1;
-	break;
-      case 'm':
-	min = atof(optarg);
-	break;
-      case 'x':
-	max = atof(optarg);
-	break;
+				flag_decrease=1;
+			break;
       case 'v':
-	fprintf(stderr,"version: %s\n",VERSIONSTR);
-	exit(1);
-	break;
+				flag_verbose=1;
+			break;
+      case '4':
+				flag_no_regex=1;
+			break;
+      case 'm':
+				min = atof(optarg);
+			break;
+      case 'x':
+				max = atof(optarg);
+			break;
+      case 'V':
+				fprintf(stderr,"version: %s\nreleased: %s\n",VERSIONSTR,RELEASEDATESTR);
+				exit(1);
+			break;
       default:
-	usage();
+				usage();
       }
     }
   
@@ -146,12 +184,14 @@ int main(int argc, char **argv)
     gotd = 1;
   }
 
-  
+  /* select the window to make transparent */
   if(select_method==1) {
     /* don't wait for click */
+		if(flag_verbose) printf("Selecting window by click\n");
     target_win = Get_Window_Under_Cursor(dpy);
 	} else if(select_method==2) {
-    /* select by id, pretty much stripped from dsimple.c */
+    /* select by id, pretty much ripped from dsimple.c */
+		if(flag_verbose) printf("Selecting window by id\n");
 		sscanf(idstr, "0x%lx", &target_win);
 		if (!target_win)
 		  sscanf(idstr, "%ld", &target_win);
@@ -159,30 +199,29 @@ int main(int argc, char **argv)
 		  fprintf(stderr,"Invalid window id format: %s.\n", idstr);
 			exit(0);
 		}
-		/* apparently we want the grandparent of this window, otherwise
-		 * deleting the property won't work, cudos to another transset patch
-		 * for leading me in this direction */
-	  if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
-			  &num_children))
-  	  Fatal_Error("Can't query window tree.");
-  	if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
-			  &num_children))
-  	  Fatal_Error("Can't query window tree.");
+		if(flag_verbose) printf("Selected 0x%x, trying to get top parent ... ",(unsigned int)target_win);
+		target_win = get_top_window(dpy,target_win);
+		if(flag_verbose) printf("found 0x%x\n",(unsigned int)target_win);
 		
 	} else if(select_method==3) {
-    /* select by name, pretty much stripped from dsimple.c */
-		target_win = Window_With_Name(dpy, RootWindow(dpy, screen),namestr);
+    /* select by name, pretty much ripped from dsimple.c */
+		if(flag_verbose) printf("Selecting window by name\n");
+
+		if(flag_no_regex)
+			target_win = Window_With_Name(dpy, RootWindow(dpy, screen),namestr);
+		else
+			target_win = Window_With_Name_Regex(dpy, RootWindow(dpy, screen),namestr);
+		
 		if (!target_win) {
-			  fprintf(stderr,"No window with name %s exists!\n",namestr);
+			  fprintf(stderr,"No window matching %s exists!\n",namestr);
 				exit(0);
 		}
-		/* get grandparent */
-		if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
-			  &num_children))
-  	  Fatal_Error("Can't query window tree.");
-  	if (!XQueryTree(dpy, target_win, &root_win, &target_win, &child_list,
-			  &num_children))
-  	  Fatal_Error("Can't query window tree.");
+		/* store the matched window name*/
+		XFetchName(dpy,target_win,&windowname);
+
+		if(flag_verbose) printf("Selected 0x%x, trying to get top parent ... ",(unsigned int)target_win);
+		target_win = get_top_window(dpy,target_win);
+		if(flag_verbose) printf("found 0x%x\n",(unsigned int)target_win);
 		
   } else {
     /* grab mouse and return window that is next clicked */
@@ -206,7 +245,7 @@ int main(int argc, char **argv)
     {
       memcpy (&current_opacity, data, sizeof (unsigned int));
       XFree(( void *) data );
-      //      printf("Found property: %g\n", (double) opacity / OPAQUE);
+      if(flag_verbose) printf("Found transparency: %g\n", (double) opacity / OPAQUE);
     }
   else
     current_opacity = OPAQUE;
@@ -240,9 +279,11 @@ int main(int argc, char **argv)
 		    XA_CARDINAL, 32, PropModeReplace, 
 		    (unsigned char *) &opacity, 1L);
   XSync(dpy, False);
-  printf("Set Property to %g\n", (double) opacity / OPAQUE);
-  
 
+	printf("Set Property to %g", (double) opacity / OPAQUE);
+  if(windowname) printf(" on \n%s\n",windowname);
+	else printf("\n");
+	if(flag_verbose) printf("Propery set on: 0x%x\n",(unsigned int)target_win);
   /* all done, wasn't that simple */
   return 0;
 }

@@ -35,6 +35,9 @@ from The Open Group.
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+
+#include <sys/types.h>
+#include <regex.h>
 /*
  * Other_stuff.h: Definitions of routines in other_stuff.
  *
@@ -460,9 +463,9 @@ Window Get_Window_Under_Cursor(dpy)
 {
   int status;
   Cursor cursor;
-  XEvent event;
+  //XEvent event;
   Window target_win = None, root = RootWindow(dpy,screen);
-  int buttons = 0;
+  //int buttons = 0;
   Window tmp;
   int rx,ry,cx,cy;
   unsigned int mask;
@@ -503,7 +506,7 @@ Window Window_With_Name(dpy, top, name)
 	int i;
 	Window w=0;
 	char *window_name;
-
+		
 	if (XFetchName(dpy, top, &window_name) && !strcmp(window_name, name))
 	  return(top);
 
@@ -517,6 +520,68 @@ Window Window_With_Name(dpy, top, name)
 	}
 	if (children) XFree ((char *)children);
 	return(w);
+}
+
+/*
+ * Window_With_Name_Regex: Same as above but use regular expressions
+ *                         to match a window name. Only returns the first
+ *                         result.
+ * Window_With_Name_Regex_Recurse:	Takes regex_t struct as argument
+ * 																	instead of char*
+ * Written by Daniel Forchheimer 2005
+ * */
+Window Window_With_Name_Regex_Recurse(dpy, top, reg_name)
+     Display *dpy;
+     Window top;
+		 regex_t *reg_name;
+{
+	Window *children, dummy;
+	unsigned int nchildren;
+	int i;
+	Window w=0;
+	char *window_name;
+		
+	if (XFetchName(dpy, top, &window_name) && !regexec(reg_name,window_name,0,NULL,0))
+	  return(top);
+
+	if (!XQueryTree(dpy, top, &dummy, &dummy, &children, &nchildren))
+	  return(0);
+
+	for (i=0; i<nchildren; i++) {
+		w = Window_With_Name_Regex_Recurse(dpy, children[i], reg_name);
+		if (w)
+		  break;
+	}
+	if (children) XFree ((char *)children);
+	return(w);
+}
+/* prepare the reg-exp for use with above function */
+Window Window_With_Name_Regex(dpy,top,name) 
+	Display *dpy;
+	Window top;
+	char *name;
+{
+		int err_no=0;
+		regex_t *regexp_name;
+		Window target_win;
+		regexp_name = (regex_t *) malloc(sizeof(regex_t));
+		if((err_no=regcomp(regexp_name, name, 0))!=0)
+    {
+      size_t length; 
+      char *buffer;
+      length = regerror (err_no, regexp_name, NULL, 0);
+      buffer = malloc(length);
+      regerror (err_no, regexp_name, buffer, length);
+      fprintf(stderr, "%s\n", buffer); 
+			free(buffer);
+      regfree(regexp_name);
+      exit(1);
+    }
+		target_win = Window_With_Name_Regex_Recurse(dpy, RootWindow(dpy, screen),regexp_name);
+
+	  regfree(regexp_name); 
+		free(regexp_name);
+		return target_win;
 }
 
 /*

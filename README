@@ -21,8 +21,11 @@ Features
 	*force toggle
 	*increase or decrease opacity
 
-Latest version is: 3
-Updated 2005-01-20
+Instalation
+	type:
+		make
+		make install
+
 Homepage: http://www.forchheimer.se/transset-df/
 
 Any questions/sugestions or if you just want to say hello don't fear to send
