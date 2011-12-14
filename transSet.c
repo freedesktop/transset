@@ -105,6 +105,14 @@ Get_Actual_Window (Display *dpy)
     return Get_Top_Window (dpy, w);
 }
 
+typedef enum {
+    SELECT_METHOD_CLICK = 0,
+    SELECT_METHOD_WINDOW_UNDER_CURSOR = 1,
+    SELECT_METHOD_WINDOW_ID = 2,
+    SELECT_METHOD_WINDOW_NAME = 3,
+    SELECT_METHOD_FOCUSED_WINDOW = 4
+} select_method_t;
+
 int
 main (int argc, char **argv)
 {
@@ -112,7 +120,7 @@ main (int argc, char **argv)
     double d;
     unsigned int opacity;
     unsigned int current_opacity;
-    int select_method = 0; // 0 = click, 1 = point, 2 = id, 3 = name
+    select_method_t select_method = SELECT_METHOD_CLICK;
     Bool flag_toggle = False;
     Bool flag_increase = False;
     Bool flag_decrease = False;
@@ -161,21 +169,21 @@ main (int argc, char **argv)
             Usage ();
             break;
         case 'c':
-            select_method = 0;
+            select_method = SELECT_METHOD_CLICK;
             break;
         case 'p':
-            select_method = 1;
+            select_method = SELECT_METHOD_WINDOW_UNDER_CURSOR;
             break;
         case 'i':
             idstr = optarg;
-            select_method = 2;
+            select_method = SELECT_METHOD_WINDOW_ID;
             break;
         case 'n':
             namestr = optarg;
-            select_method = 3;
+            select_method = SELECT_METHOD_WINDOW_NAME;
             break;
         case 'a':
-            select_method = 4;
+            select_method = SELECT_METHOD_FOCUSED_WINDOW;
             break;
         case '1':
             flag_increase = True;
@@ -211,13 +219,16 @@ main (int argc, char **argv)
     }
 
     /* select the window to make transparent */
-    if (select_method == 1) {
+    switch (select_method) {
+    case SELECT_METHOD_WINDOW_UNDER_CURSOR:
         /* don't wait for click */
         if (flag_verbose)
             printf ("Selecting window by click\n");
         target_win = Get_Window_Under_Cursor (dpy);
-    } else if (select_method == 2) {
-        /* select by id, pretty much ripped from dsimple.c */
+        break;
+
+    case SELECT_METHOD_WINDOW_ID:
+        /* pretty much ripped from dsimple.c */
         if (flag_verbose)
             printf ("Selecting window by id\n");
         sscanf (idstr, "0x%lx", &target_win);
@@ -235,7 +246,9 @@ main (int argc, char **argv)
         if (flag_verbose)
             printf ("found 0x%x\n", (unsigned int) target_win);
 
-    } else if (select_method == 3) {
+        break;
+
+    case SELECT_METHOD_WINDOW_NAME:
         /* select by name, pretty much ripped from dsimple.c */
         if (flag_verbose)
             printf ("Selecting window by name\n");
@@ -263,11 +276,16 @@ main (int argc, char **argv)
         if (flag_verbose)
             printf ("found 0x%x\n", (unsigned int) target_win);
 
-    } else if (select_method == 4) {
+        break;
+
+    case SELECT_METHOD_FOCUSED_WINDOW:
         target_win = Get_Actual_Window (dpy);
-    } else {
+        break;
+
+    default:
         /* grab mouse and return window that is next clicked */
         target_win = Select_Window (dpy);
+        break;
     }
 
     if (!gotd)
