@@ -225,7 +225,8 @@ main (int argc, char **argv)
             sscanf (idstr, "%ld", &target_win);
         if (!target_win) {
             fprintf (stderr, "Invalid window id format: %s.\n", idstr);
-            exit (0);
+            XCloseDisplay (dpy);
+            return 1;
         }
         if (flag_verbose)
             printf ("Selected 0x%x, trying to get top parent ... ",
@@ -248,7 +249,8 @@ main (int argc, char **argv)
 
         if (!target_win) {
             fprintf (stderr, "No window matching %s exists!\n", namestr);
-            exit (0);
+            XCloseDisplay (dpy);
+            return 1;
         }
         /* store the matched window name*/
         XFetchName (dpy, target_win, &windowname);
@@ -325,5 +327,6 @@ main (int argc, char **argv)
     if (flag_verbose)
         printf ("Propery set on: 0x%x\n", (unsigned int) target_win);
 
+    XCloseDisplay (dpy);
     return 0;
 }
