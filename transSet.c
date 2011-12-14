@@ -22,7 +22,6 @@
 #include <getopt.h>
 #include <string.h>
 #include <sys/types.h>
-#include <regex.h>
 
 Window target_win;
 

@@ -39,8 +39,6 @@ from The Open Group.
  * Send bugs, etc. to chariot@athena.mit.edu.
  */
 
-#include <regex.h>
-
 extern char *program_name;                   /* Name of this program */
 extern Display *dpy;                         /* The current display */
 extern int screen;                           /* The current screen */
