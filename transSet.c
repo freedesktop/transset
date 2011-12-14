@@ -167,12 +167,10 @@ main (int argc, char **argv)
             select_method = 1;
             break;
         case 'i':
-            idstr = malloc (strlen (optarg) + 1);
             idstr = optarg;
             select_method = 2;
             break;
         case 'n':
-            namestr = malloc (strlen (optarg) + 1);
             namestr = optarg;
             select_method = 3;
             break;
