@@ -81,6 +81,7 @@ Get_Top_Window (Display *dpy, Window child) {
                      &num_children))
         Fatal_Error ("Can't query window tree.");
 
+    XFree ((void *) child_list);
     if (parent == root)
         return child;
 
@@ -89,7 +90,7 @@ Get_Top_Window (Display *dpy, Window child) {
         if (!XQueryTree (dpy, child, &root, &parent, &child_list,
                          &num_children))
             Fatal_Error ("Can't query window tree.");
-
+        XFree ((void *) child_list);
     }
     return child;
 }
