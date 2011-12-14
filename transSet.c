@@ -120,7 +120,7 @@ main (int argc, char **argv)
     int flag_no_regex = 0;
     int o;
     float min = 0, max = 1;
-    char *idstr, *namestr;
+    char *idstr = NULL, *namestr = NULL;
     char *windowname = NULL;
 
     int options_index = 0;
