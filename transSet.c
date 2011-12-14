@@ -108,16 +108,16 @@ Get_Actual_Window (Display *dpy)
 int
 main (int argc, char **argv)
 {
-    int gotd = 0;
+    Bool gotd = False;
     double d;
     unsigned int opacity;
     unsigned int current_opacity;
     int select_method = 0; // 0 = click, 1 = point, 2 = id, 3 = name
-    int flag_toggle = 0;
-    int flag_increase = 0;
-    int flag_decrease = 0;
-    int flag_verbose = 0;
-    int flag_no_regex = 0;
+    Bool flag_toggle = False;
+    Bool flag_increase = False;
+    Bool flag_decrease = False;
+    Bool flag_verbose = False;
+    Bool flag_no_regex = False;
     int o;
     float min = 0, max = 1;
     char *idstr = NULL, *namestr = NULL;
@@ -155,7 +155,7 @@ main (int argc, char **argv)
                              long_options, &options_index)) != -1) {
         switch (o) {
         case 't':
-            flag_toggle = 1;
+            flag_toggle = True;
             break;
         case 'h':
             Usage ();
@@ -178,16 +178,16 @@ main (int argc, char **argv)
             select_method = 4;
             break;
         case '1':
-            flag_increase = 1;
+            flag_increase = True;
             break;
         case '2':
-            flag_decrease = 1;
+            flag_decrease = True;
             break;
         case 'v':
-            flag_verbose = 1;
+            flag_verbose = True;
             break;
         case '4':
-            flag_no_regex = 1;
+            flag_no_regex = True;
             break;
         case 'm':
             min = atof (optarg);
@@ -207,7 +207,7 @@ main (int argc, char **argv)
 
     if (optind < argc) {
         d = atof (argv[optind]);
-        gotd = 1;
+        gotd = True;
     }
 
     /* select the window to make transparent */
@@ -302,7 +302,7 @@ main (int argc, char **argv)
 
     /* for user-compability with transset */
     if (!gotd)
-        flag_toggle = 1;
+        flag_toggle = True;
 
     /* toggle */
     if (flag_toggle)
