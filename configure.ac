@@ -1,12 +1,13 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.57)
-AC_INIT([transset], [0.9.1], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg])
-AC_CONFIG_SRCDIR([transSet.c])
-AC_CONFIG_HEADER([config.h])
+# Initialize Autoconf
+AC_PREREQ([2.60])
+AC_INIT([transset], [0.9.1],
+	[https://bugs.freedesktop.org/enter_bug.cgi?product=xorg], [transset])
+AC_CONFIG_SRCDIR([Makefile.am])
+AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([dist-bzip2 foreign])
+# Initialize Automake
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
 # Require xorg-macros 1.8 or later for MAN_SUBSTS set by XORG_MANPAGE_SECTIONS
@@ -15,7 +16,7 @@ m4_ifndef([XORG_MACROS_VERSION],
 XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
-# Checks for library functions.
+# Obtain compiler/linker options for the transset dependencies
 PKG_CHECK_MODULES(TRANSSET, x11)
 
 AC_CONFIG_FILES([
