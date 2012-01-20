@@ -26,7 +26,6 @@
   from The Open Group.
 
 */
-/* $XFree86: xc/programs/xlsfonts/dsimple.c,v 3.6 2001/12/14 20:02:09 dawes Exp $ */
 
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
