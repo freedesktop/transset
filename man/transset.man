@@ -1,5 +1,5 @@
 .ds q \N'34'
-.TH transset 1
+.TH TRANSSET __appmansuffix__ __xorgversion__
 .SH NAME
 transset \- Set transparency on a window
 .SH SYNOPSIS
@@ -13,6 +13,6 @@ and COMPOSITE extensions.  It lets the user set the transparency on a window.
 .BI n
 Where n is a number from 0 to 1, zero being transparent and 1 being opaque
 .SH BUGS
-Probably.  Please report any you find to http://bugs.freedesktop.org/.
+Probably.  Please report any you find to https://bugs.freedesktop.org/enter_bug.cgi?product=xorg.
 .SH AUTHORS
 Matthew Hawn
