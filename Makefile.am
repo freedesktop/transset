@@ -1,5 +1,6 @@
+SUBDIRS = man
+
 bin_PROGRAMS = transset
-man_MANS = transset.1
 
 AM_CFLAGS = $(CWARNFLAGS) $(TRANSSET_CFLAGS)
 transset_LDADD = $(TRANSSET_LIBS) $(LIBOBJS)
