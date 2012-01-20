@@ -3,7 +3,7 @@ SUBDIRS = man
 bin_PROGRAMS = transset
 
 AM_CFLAGS = $(CWARNFLAGS) $(TRANSSET_CFLAGS)
-transset_LDADD = $(TRANSSET_LIBS) $(LIBOBJS)
+transset_LDADD = $(TRANSSET_LIBS)
 
 transset_SOURCES = transSet.c dsimple.c dsimple.h
 
