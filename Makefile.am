@@ -1,4 +1,5 @@
 SUBDIRS = man
+EXTRA_DIST = autogen.sh
 
 bin_PROGRAMS = transset
 
