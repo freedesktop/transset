@@ -130,7 +130,7 @@ int
 main (int argc, char **argv)
 {
     Bool gotd = False;
-    double d;
+    double d = 0.75;
     unsigned int opacity;
     unsigned int current_opacity;
     select_method_t select_method = SELECT_METHOD_CLICK;
@@ -300,9 +300,6 @@ main (int argc, char **argv)
         target_win = Select_Window (dpy);
         break;
     }
-
-    if (!gotd)
-        d = 0.75;
 
     /* get property */
     XGetWindowProperty (dpy, target_win, XInternAtom (dpy, OPACITY, False),
