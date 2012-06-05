@@ -64,4 +64,4 @@ Window Select_Window (Display *);
 Window Get_Window_Under_Cursor (Display *); /*added by Daniel Forchheimer for transset-df*/
 Window Window_With_Name (Display *, Window, char *);
 Window Window_With_Name_Regex (Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
-void Fatal_Error (char *, ...) _X_NORETURN;
+void Fatal_Error (char *, ...) _X_NORETURN _X_ATTRIBUTE_PRINTF(1,2);
