@@ -54,7 +54,7 @@
 
 
 /* This stuff is defined in the calling program by just_display.h */
-char *program_name = "unknown_program";
+const char *program_name = "unknown_program";
 Display *dpy;
 int screen;
 
@@ -139,7 +139,7 @@ Setup_Display_And_Screen (int *argc, char **argv)
  * Does not require dpy or screen defined.
  */
 void
-Fatal_Error (char *msg, ...)
+Fatal_Error (const char *msg, ...)
 {
     va_list args;
     fflush (stdout);
