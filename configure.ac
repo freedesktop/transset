@@ -1,7 +1,7 @@
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([transset], [0.9.1],
+AC_INIT([transset], [1.0.0],
 	[https://bugs.freedesktop.org/enter_bug.cgi?product=xorg], [transset])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
