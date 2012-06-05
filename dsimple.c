@@ -157,19 +157,19 @@ Fatal_Error (const char *msg, ...)
  */
 
 Window
-Select_Window (Display *dpy)
+Select_Window (Display *disp)
 {
     int status;
     Cursor cursor;
     XEvent event;
-    Window target_win = None, root = RootWindow (dpy, screen);
+    Window target_win = None, root = RootWindow (disp, screen);
     int buttons = 0;
       
     /* Make the target cursor */
-    cursor = XCreateFontCursor (dpy, XC_crosshair);
+    cursor = XCreateFontCursor (disp, XC_crosshair);
 
     /* Grab the pointer using target cursor, letting it room all over */
-    status = XGrabPointer (dpy, root, False,
+    status = XGrabPointer (disp, root, False,
                            ButtonPressMask|ButtonReleaseMask, GrabModeSync,
                            GrabModeAsync, root, cursor, CurrentTime);
     if (status != GrabSuccess)
@@ -178,8 +178,8 @@ Select_Window (Display *dpy)
     /* Let the user select a window... */
     while ((target_win == None) || (buttons != 0)) {
         /* allow one more event */
-        XAllowEvents (dpy, SyncPointer, CurrentTime);
-        XWindowEvent (dpy, root, ButtonPressMask | ButtonReleaseMask, &event);
+        XAllowEvents (disp, SyncPointer, CurrentTime);
+        XWindowEvent (disp, root, ButtonPressMask | ButtonReleaseMask, &event);
         switch (event.type) {
         case ButtonPress:
             if (target_win == None) {
@@ -196,7 +196,7 @@ Select_Window (Display *dpy)
         }
     }
 
-    XUngrabPointer (dpy, CurrentTime); /* Done with pointer */
+    XUngrabPointer (disp, CurrentTime); /* Done with pointer */
 
     return (target_win);
 }
@@ -207,32 +207,32 @@ Select_Window (Display *dpy)
  */
 
 Window
-Get_Window_Under_Cursor (Display *dpy)
+Get_Window_Under_Cursor (Display *disp)
 {
     int status;
     Cursor cursor;
     //XEvent event;
-    Window target_win = None, root = RootWindow (dpy, screen);
+    Window target_win = None, root = RootWindow (disp, screen);
     //int buttons = 0;
     Window tmp;
     int rx, ry, cx, cy;
     unsigned int mask;
 
     /* Make the target cursor */
-    cursor = XCreateFontCursor (dpy, XC_crosshair);
+    cursor = XCreateFontCursor (disp, XC_crosshair);
 
     /* Grab the pointer using target cursor, letting it room all over */
-    status = XGrabPointer (dpy, root, False,
+    status = XGrabPointer (disp, root, False,
                            ButtonPressMask|ButtonReleaseMask, GrabModeSync,
                            GrabModeAsync, root, cursor, CurrentTime);
     if (status != GrabSuccess)
         Fatal_Error ("Can't grab the mouse.");
 
     /* get the window under the cursor */
-    XQueryPointer (dpy, root, &tmp, &target_win, &rx, &ry,
+    XQueryPointer (disp, root, &tmp, &target_win, &rx, &ry,
                    &cx, &cy, &mask);
 
-    XUngrabPointer (dpy, CurrentTime);      /* Done with pointer */
+    XUngrabPointer (disp, CurrentTime);      /* Done with pointer */
 
     return (target_win);
 }
@@ -245,7 +245,7 @@ Get_Window_Under_Cursor (Display *dpy)
  *                   are looked at.  Normally, top should be the RootWindow.
  */
 Window
-Window_With_Name (Display *dpy, Window top, char *name)
+Window_With_Name (Display *disp, Window top, char *name)
 {
     Window *children, dummy;
     unsigned int nchildren;
@@ -253,14 +253,14 @@ Window_With_Name (Display *dpy, Window top, char *name)
     Window w = 0;
     char *window_name;
 
-    if (XFetchName (dpy, top, &window_name) && !strcmp (window_name, name))
+    if (XFetchName (disp, top, &window_name) && !strcmp (window_name, name))
         return (top);
 
-    if (!XQueryTree (dpy, top, &dummy, &dummy, &children, &nchildren))
+    if (!XQueryTree (disp, top, &dummy, &dummy, &children, &nchildren))
         return (0);
 
     for (i = 0; i < nchildren; i++) {
-        w = Window_With_Name (dpy, children[i], name);
+        w = Window_With_Name (disp, children[i], name);
         if (w)
             break;
     }
@@ -277,7 +277,7 @@ Window_With_Name (Display *dpy, Window top, char *name)
  * Written by Daniel Forchheimer 2005
  * */
 static Window
-Window_With_Name_Regex_Recurse (Display *dpy, Window top,
+Window_With_Name_Regex_Recurse (Display *disp, Window top,
                                 regex_t *reg_name)
 {
     Window *children, dummy;
@@ -286,15 +286,15 @@ Window_With_Name_Regex_Recurse (Display *dpy, Window top,
     Window w = 0;
     char *window_name;
 
-    if (XFetchName (dpy, top, &window_name) &&
+    if (XFetchName (disp, top, &window_name) &&
         !regexec (reg_name, window_name, 0, NULL, 0))
         return (top);
 
-    if (!XQueryTree (dpy, top, &dummy, &dummy, &children, &nchildren))
+    if (!XQueryTree (disp, top, &dummy, &dummy, &children, &nchildren))
         return (0);
 
     for (i = 0; i < nchildren; i++) {
-        w = Window_With_Name_Regex_Recurse (dpy, children[i], reg_name);
+        w = Window_With_Name_Regex_Recurse (disp, children[i], reg_name);
         if (w)
             break;
     }
@@ -305,7 +305,7 @@ Window_With_Name_Regex_Recurse (Display *dpy, Window top,
 
 /* prepare the reg-exp for use with above function */
 Window
-Window_With_Name_Regex (Display *dpy, Window top, char *name)
+Window_With_Name_Regex (Display *disp, Window top, char *name)
 {
     int err_no = 0;
     regex_t *regexp_name;
@@ -322,8 +322,8 @@ Window_With_Name_Regex (Display *dpy, Window top, char *name)
         regfree (regexp_name);
         exit (1);
     }
-    target_win = Window_With_Name_Regex_Recurse (dpy,
-                                                 RootWindow (dpy, screen),
+    target_win = Window_With_Name_Regex_Recurse (disp,
+                                                 RootWindow (disp, screen),
                                                  regexp_name);
 
     regfree (regexp_name);

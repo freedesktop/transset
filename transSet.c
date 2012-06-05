@@ -84,13 +84,13 @@ Usage (void)
 
 /* returns the highest parent of child that is not the root-window */
 static Window
-Get_Top_Window (Display *dpy, Window child) {
+Get_Top_Window (Display *disp, Window child) {
     Window parent;
     Window root;
     Window *child_list;
     unsigned int num_children;
 
-    if (!XQueryTree (dpy, child, &root, &parent, &child_list,
+    if (!XQueryTree (disp, child, &root, &parent, &child_list,
                      &num_children))
         Fatal_Error ("Can't query window tree.");
 
@@ -100,7 +100,7 @@ Get_Top_Window (Display *dpy, Window child) {
 
     while (parent != root) {
         child = parent;
-        if (!XQueryTree (dpy, child, &root, &parent, &child_list,
+        if (!XQueryTree (disp, child, &root, &parent, &child_list,
                          &num_children))
             Fatal_Error ("Can't query window tree.");
         XFree ((void *) child_list);
@@ -109,13 +109,13 @@ Get_Top_Window (Display *dpy, Window child) {
 }
 
 static Window
-Get_Actual_Window (Display *dpy)
+Get_Actual_Window (Display *disp)
 {
     int i;
     Window w;
 
-    XGetInputFocus (dpy, &w, &i);
-    return Get_Top_Window (dpy, w);
+    XGetInputFocus (disp, &w, &i);
+    return Get_Top_Window (disp, w);
 }
 
 typedef enum {
