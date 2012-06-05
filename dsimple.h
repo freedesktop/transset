@@ -47,7 +47,7 @@ extern int screen;                           /* The current screen */
                                                  program_name */
 
 void Setup_Display_And_Screen (int *, char **);
-void Usage (void);
+void Usage (void) _X_NORETURN;
 
 #define X_USAGE "[host:display]"              /* X arguments handled by
 						 Get_Display_Name */
