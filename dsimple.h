@@ -37,6 +37,8 @@ from The Open Group.
  * Send bugs, etc. to chariot@athena.mit.edu.
  */
 
+#include <X11/Xfuncproto.h>
+
 extern char *program_name;                   /* Name of this program */
 extern Display *dpy;                         /* The current display */
 extern int screen;                           /* The current screen */
@@ -62,8 +64,4 @@ Window Select_Window (Display *);
 Window Get_Window_Under_Cursor (Display *); /*added by Daniel Forchheimer for transset-df*/
 Window Window_With_Name (Display *, Window, char *);
 Window Window_With_Name_Regex (Display *, Window, char *); /*added by Daniel Forchheimer for transset-df*/
-#ifdef __GNUC__
-void Fatal_Error (char *, ...) __attribute__((__noreturn__));
-#else
-void Fatal_Error (char *, ...);
-#endif
+void Fatal_Error (char *, ...) _X_NORETURN;
