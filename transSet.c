@@ -44,7 +44,7 @@ Window target_win;
 void
 Usage (void)
 {
-    fprintf (stderr, "usage: transset-df [-options ...] [opacity]\n");
+    fprintf (stderr, "usage: transset [-options ...] [opacity]\n");
     fprintf (stderr, "options:\n");
 
     fprintf (stderr,
