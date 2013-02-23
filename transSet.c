@@ -25,6 +25,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #define VERSIONSTR "6"
 #define RELEASEDATESTR "2007-09-21"
 
@@ -203,8 +207,8 @@ main (int argc, char **argv)
             max = atof (optarg);
             break;
         case 'V':
-            fprintf (stderr, "version: %s\nreleased: %s\n",
-                     VERSIONSTR, RELEASEDATESTR);
+            fprintf (stderr, "%s\nversion: %s\nreleased: %s\n",
+                     PACKAGE_STRING, VERSIONSTR, RELEASEDATESTR);
             exit (1);
             break;
         default:
