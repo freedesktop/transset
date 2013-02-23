@@ -300,7 +300,7 @@ main (int argc, char **argv)
         XFree ((void *) data);
         if (flag_verbose)
             printf ("Found transparency: %g\n",
-                    (double) opacity / OPAQUE);
+                    (double) current_opacity / OPAQUE);
     } else
         current_opacity = OPAQUE;
 
