@@ -3,6 +3,7 @@
 AC_PREREQ([2.60])
 AC_INIT([transset], [1.0.0],
 	[https://bugs.freedesktop.org/enter_bug.cgi?product=xorg], [transset])
+RELEASE_DATE="2012-06-07"
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
 
@@ -18,6 +19,9 @@ XORG_DEFAULT_OPTIONS
 
 # Obtain compiler/linker options for the transset dependencies
 PKG_CHECK_MODULES(TRANSSET, x11 xproto >= 7.0.17)
+
+AC_DEFINE_UNQUOTED(RELEASE_DATE, ["$RELEASE_DATE"],
+                                 [Release date of this package])
 
 AC_CONFIG_FILES([
 	Makefile

@@ -30,7 +30,6 @@
 #endif
 
 #define VERSIONSTR "6"
-#define RELEASEDATESTR "2007-09-21"
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -208,7 +207,7 @@ main (int argc, char **argv)
             break;
         case 'V':
             fprintf (stderr, "%s\nversion: %s\nreleased: %s\n",
-                     PACKAGE_STRING, VERSIONSTR, RELEASEDATESTR);
+                     PACKAGE_STRING, VERSIONSTR, RELEASE_DATE);
             exit (1);
             break;
         default:
