@@ -317,7 +317,7 @@ main (int argc, char **argv)
 
     opacity = (unsigned int) (d * OPAQUE);
 
-    /* for user-compability with transset */
+    /* for user-compatibility with transset */
     if (!gotd)
         flag_toggle = True;
 
@@ -342,7 +342,7 @@ main (int argc, char **argv)
         printf ("\n");
 
     if (flag_verbose)
-        printf ("Propery set on: 0x%x\n", (unsigned int) target_win);
+        printf ("Property set on: 0x%x\n", (unsigned int) target_win);
 
     XCloseDisplay (dpy);
     return 0;
