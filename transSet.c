@@ -129,7 +129,7 @@ main (int argc, char **argv)
     Bool flag_verbose = False;
     Bool flag_no_regex = False;
     int o;
-    float min = 0, max = 1;
+    double min = 0.0, max = 1.0;
     char *idstr = NULL, *namestr = NULL;
     char *windowname = NULL;
 
