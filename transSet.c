@@ -44,37 +44,23 @@ Window target_win;
 void
 Usage (void)
 {
-    fprintf (stderr, "usage: transset [-options ...] [opacity]\n");
-    fprintf (stderr, "options:\n");
-
-    fprintf (stderr,
-             "    -h, --help           display this message\n");
-    fprintf (stderr,
-             "    -t, --toggle         force toggle of opacity\n");
-    fprintf (stderr,
-             "    -c, --click          select by clicking on window  (default)\n");
-    fprintf (stderr,
-             "    -p, --point          select the window currently under the cursor\n");
-    fprintf (stderr,
-             "    -a, --actual         select the actual window\n");
-    fprintf (stderr,
-             "    -n, --name NAME      select by name, NAME is matched as regular expression\n");
-    fprintf (stderr,
-             "    --no-regex           don't use regular expression for matching name\n");
-    fprintf (stderr,
-             "    -i, --id             select by window id\n");
-    fprintf (stderr,
-             "        --inc            increase by the given opacity\n");
-    fprintf (stderr,
-             "        --dec            decrease by given opacity\n");
-    fprintf (stderr,
-             "    -m, --min OPACITY    minimum possible opacity  (default = 0)\n");
-    fprintf (stderr,
-             "    -x, --max OPACITY    maximum possible opacity  (default = 1)\n");
-    fprintf (stderr,
-             "    -v, --verbose        print some debug info\n");
-    fprintf (stderr,
-             "    -V, --version        print version number\n");
+    fputs ("usage: transset [-options ...] [opacity]\n"
+           "options:\n"
+           "    -h, --help           display this message\n"
+           "    -t, --toggle         force toggle of opacity\n"
+           "    -c, --click          select by clicking on window  (default)\n"
+           "    -p, --point          select the window currently under the cursor\n"
+           "    -a, --actual         select the actual window\n"
+           "    -n, --name NAME      select by name, NAME is matched as regular expression\n"
+           "    --no-regex           don't use regular expression for matching name\n"
+           "    -i, --id             select by window id\n"
+           "        --inc            increase by the given opacity\n"
+           "        --dec            decrease by given opacity\n"
+           "    -m, --min OPACITY    minimum possible opacity  (default = 0)\n"
+           "    -x, --max OPACITY    maximum possible opacity  (default = 1)\n"
+           "    -v, --verbose        print some debug info\n"
+           "    -V, --version        print version number\n",
+        stderr);
 
     exit (1);
 }
