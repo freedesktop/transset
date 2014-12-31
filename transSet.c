@@ -291,11 +291,10 @@ main (int argc, char **argv)
     }
 
     /* get property */
-    XGetWindowProperty (dpy, target_win, XInternAtom (dpy, OPACITY, False),
-                        0L, 1L, False, XA_CARDINAL, &actual, &format, &n, &left,
-                        (unsigned char **) &data);
-
-    if (data != None) {
+    if ((XGetWindowProperty (dpy, target_win, XInternAtom (dpy, OPACITY, False),
+                             0L, 1L, False, XA_CARDINAL, &actual, &format, &n,
+                             &left, &data) == Success)
+        && (data != None)) {
         memcpy (&current_opacity, data, sizeof (unsigned int));
         XFree ((void *) data);
         if (flag_verbose)
