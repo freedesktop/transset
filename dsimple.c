@@ -248,8 +248,7 @@ Window
 Window_With_Name (Display *disp, Window top, char *name)
 {
     Window *children, dummy;
-    unsigned int nchildren;
-    int i;
+    unsigned int nchildren, i;
     Window w = 0;
     char *window_name;
 
@@ -281,8 +280,7 @@ Window_With_Name_Regex_Recurse (Display *disp, Window top,
                                 regex_t *reg_name)
 {
     Window *children, dummy;
-    unsigned int nchildren;
-    int i;
+    unsigned int nchildren, i;
     Window w = 0;
     char *window_name;
 
